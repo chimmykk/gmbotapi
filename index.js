@@ -3,7 +3,6 @@ require("dotenv").config();
 const { Configuration, OpenAIApi } = require("openai");
 const cors = require("cors");
 
-
 const app = express();
 
 app.use(express.json());
@@ -31,9 +30,10 @@ app.post("/usegpt", async (req, res) => {
       presence_penalty: 0.0,
       stop: ["\n"],
     });
+    let responseData = response.data.choices[0].text.replace(/["']/g, "");
     return res.status(200).json({
       success: true,
-      data: response.data.choices[0].text,
+      data: responseData.trim(),
     });
   } catch (error) {
     return res.status(400).json({
