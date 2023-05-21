@@ -1,27 +1,29 @@
 const express = require("express");
 require("dotenv").config();
 const { Configuration, OpenAIApi } = require("openai");
+const cors = require("cors");
+
 
 const app = express();
 
 app.use(express.json());
-
+app.use(cors());
 const configuration = new Configuration({
   apiKey: process.env.OPEN_AI_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
-app.post("/find-complexity", async (req, res) => {
+app.post("/usegpt", async (req, res) => {
   try {
     const { prompt } = req.body;
     const response = await openai.createCompletion({
       model: "text-davinci-003",
       prompt: `
-              ${prompt}
-      
-              The time complexity of this function is
-              ###
-            `,
+        ${prompt}
+        
+        Marv says sarcastically,
+   
+      `,
       max_tokens: 64,
       temperature: 0,
       top_p: 1.0,
@@ -29,7 +31,6 @@ app.post("/find-complexity", async (req, res) => {
       presence_penalty: 0.0,
       stop: ["\n"],
     });
-
     return res.status(200).json({
       success: true,
       data: response.data.choices[0].text,
@@ -44,6 +45,6 @@ app.post("/find-complexity", async (req, res) => {
   }
 });
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => console.log(`Server listening on port ${port}`));
